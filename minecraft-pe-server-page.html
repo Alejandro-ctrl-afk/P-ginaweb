@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sevidor Craftsman 0.15.10</title>
+    <style>
+        :root {
+            --primary: #27ae60;
+            --secondary: #3498db;
+            --accent: #e67e22;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --highlight: #f1c40f;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary);
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/api/placeholder/1200/400');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+        
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        
+        .server-info {
+            background-color: rgba(0,0,0,0.4);
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .server-status {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: var(--primary);
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2em;
+            margin: 40px 0 20px;
+            color: var(--dark);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 4px;
+            background-color: var(--accent);
+            margin: 10px auto;
+        }
+        
+        /* Navegación de contenido */
+        .content-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .content-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .card-img {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .card-content h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+        
+        .card-content p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .card-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--highlight);
+            color: var(--dark);
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        
+        /* Sección destacada */
+        .pe-features {
+            background-color: var(--light);
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin: 40px 0;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .feature-box {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .feature-box img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-box h4 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        /* Galería */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .gallery-item {
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+        
+        /* Cómo conectar */
+        .connect-section {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .connect-section h2 {
+            color: white;
+        }
+        
+        .connect-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .connect-step {
+            flex: 1;
+            min-width: 250px;
+            background-color: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+        
+        .social-links {
+            margin: 20px 0;
+        }
+        
+        .social-links a {
+            color: white;
+            margin: 0 10px;
+            font-size: 1.2em;
+            text-decoration: none;
+        }
+        
+        .social-links a:hover {
+            color: var(--accent);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            
+            .connect-steps {
+                flex-direction: column;
+            }
+        }
+        
+        /* Modal para mostrar contenido */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            position: relative;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            background-color: var(--dark);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>GALAXIA | 0.15.10</h1>
+        <p>¡Que esperas para unirte a nustro server disfruta de nustas modalidades y diviertete jugando</p>
+        <div class="server-info">
+            <span class="server-status">ONLINE</span>
+            IP: 69.30.219.179 | Puerto: 1399 | Capacidad para: 20 jugadores
+        </div>
+    </header>
+    
+    <div class="container">
+        <h2 class="section-title">Explora Nuestro Servidor</h2>
+        <p style="text-align: center;">Haz clic en las categorías para ver todo lo que ofrecemos en nuestro servidor de Craftsman 0.15.10</p>
+        
+        <div class="content-nav">
+            <div class="content-card" onclick="showModal('worldsModal')">
+                <div class="card-img">
+                    <img src="IMG-20250413-WAOO31.jpg" Alt="una imagen de ejemplo" width="64" height="64">
+                    <span class="card-badge">1 Mundos</span>
+                </div>
+                <div class="card-content">
+                    <h3>Mundos</h3>
+                    <p>Explora nuestro mundo con biomas Clasicos.</p>
+                </div>
+            </div>
+            
+            <div class="content-card" onclick="showModal('minigamesModal')">
+                <div class="card-img">
+                    <img src="/api/placeholder/400/180" alt="Minijuegos">
+                    <span class="card-badge">4 Juegos</span>
+                </div>
+                <div class="card-content">
+                    <h3>Modalidades de diverción</h3>
+                    <p>Diviértete con nuestros juegos adaptados para craftsmam: The bridge,skywars,UHC-ARENA y Parkour</p>
+                </div>
+            </div>
+          
+        
+        <div class="pe-features">
+            <h2 class="section-title">Características Especiales PE 0.15.10</h2>
+            <p style="text-align: center;">Nuestro servidor está optimizado para la versión Pocket Edition 0.15.10 con características únicas</p>
+            
+            <div class="features-grid">
+                <div class="feature-box">
+                    <img src="Enchanted_Book.gif" Alt="una imagen de ejemplo" width="64" height="64">
+                    <h4>Optimizado para Móviles</h4>
+                    <p>Rendimiento especial para dispositivos con poca memoria y recursos limitados.</p>
+                </div>
+                
+                <div class="feature-box">
+                    <img src="Enchanted_Book.gif" Alt="una imagen de ejemplo" width="64" height="64">
+                    <h4>Comandos Simplificados</h4>
+                    <p>Sistema de comandos adaptado para escritura rápida en teclados móviles.</p>
+                </div>
+                
+                <div class="feature-box">
+                    <img src="Enchanted_Book.gif" Alt="una imagen de ejemplo" width="64" height="64">
+                    <h4>Plugins Exclusivos</h4>
+                    <p>Plugins diseñados específicamente para el servidor.</p>
+                </div>
+                
+                <div class="feature-box">
+                    <img src="Enchanted_Book.gif" Alt="una imagen de ejemplo" width="64" height="64">
+                    <h4>Compatibilidad Total</h4>
+                    <p>Funciona en Android y Wins 10 Edition de la versión 0.15.10.</p>
+                </div>
+            </div>
+        
+        <div class="connect-section">
+            <h2 class="section-title">| Cómo entrar al server 0.15.10 |</h2>
+            <p>Sigue estos pasos para unirte a nuestro servidor desde tu dispositivo móvil</p>
+            
+            <div class="connect-steps">
+                <div class="connect-step">
+                    <div class="step-number">1</div>
+                    <h4>Instala Craftsman 0.15.10</h4>
+                    <p>Asegúrate de tener instalada específicamente la versión 0.15.10 en tu dispositivo.</p>
+                </div>
+                
+                <div class="connect-step">
+                    <div class="step-number">2</div>
+                    <h4>Abre el Juego</h4>
+                    <p>Inicia craftsman y toca en el botón "Jugar" y luego en "Servidores".</p>
+                </div>
+                
+                <div class="connect-step">
+                    <div class="step-number">3</div>
+                    <h4>Añade Servidor</h4>
+                    <p>Toca en "Añadir Servidor" e ingresa estos datos:<br>
+                    Nombre: GalaxiaMC<br>
+                    Dirección: 69.30.219.179<br>
+                    Puerto: 1399</p>
+                </div>
+                
+                <div class="connect-step">
+                    <div class="step-number">4</div>
+                    <h4>¡Conéctate!</h4>
+                    <p>Guarda el servidor y toca en él para conectarte. ¡Bienvenido al servidor!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modales para cada sección -->
+    <div id="worldsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('worldsModal')">&times;</span>
+            <div class="modal-header">
+                <h2>Mundo del Servidor</h2>
+            </div>
+            <div class="modal-body">
+                <h3>Mundo Principal (Supervivencia | anarquico)</h3>
+                <p>Una aventura por explorar entra y combate pero ten cuidado no es facil!!</p>
+                <h2>-----------------------------------------------</h2>
+                <h2>Imagen para que la imagen mejor! unete a verlo con tus propios ojos!!!</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div id="minigamesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('minigamesModal')">&times;</span>
+            <div class="modal-header">
+                <h2>Juegos de divercion</h2>
+            </div>
+            <div class="modal-body">
+                <h3>1) SkyWars</h3>
+                <p>Versión adaptada de SkyWars para Pocket Edition. Batalla en islas flotantes y sé el último superviviente.</p>
+                <h2>-----------------------------------------------</h2>
+                <h2 class="section-title">Imagen para que la imagen mejor! unete a verlo con tus propios ojos!!!</h2>
+                
+                <h3>2) The Bridge</h3>
+                <p>Este es un juego de pvp 1vs1 donde hay modos solo,team y squat, lucha y combate al enemigo.</p>
+                <h2>-----------------------------------------------</h2>
+                <h2 class="section-title">Imagen para que la imagen mejor! unete a verlo con tus propios ojos!!!</h2>
+                
+                <h3>3) UHC-ARENA</h3>
+                <p>Lucha y gana este modo no es facil es un todos contra todos!!.</p>
+                <h2>-----------------------------------------------</h2>
+                <h2 class="section-title">Imagen para que la imagen mejor! unete a verlo con tus propios ojos!!!</h2>
+                
+                <h3>4) Parkour</h3>
+                <p>Demuestra tus habilidades en el parkour este modo tiene recompensa!!</p>
+                <h2>-----------------------------------------------</h2>
+                <h2>Imagen para que la imagen mejor! unete a verlo con tus propios ojos!!!</h2>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contenido modal para otras secciones (similar al anterior) -->
+    <div id="buildingsModal" class="modal"><!-- Contenido de construcciones --></div>
+    <div id="shopModal" class="modal"><!-- Contenido de tiendas --></div>
+    <div id="eventsModal" class="modal"><!-- Contenido de eventos --></div>
+    <div id="rankingsModal" class="modal"><!-- Contenido de rangos --></div>
+    
+    <footer>
+        <div class="social-links">
+            <a href="#">Discord: builder_ale_ofi</a>
+            <a href="#">YouTube: @ale_craft_1k</a>
+        </div>
+        <p>Suport: ale_craft_1k y Administración </p>
+    </footer>
+    
+    <script>
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+        
+        // Cerrar modal al hacer clic fuera del contenido
+        window.onclick = function(event) {
+            var modals = document.getElementsByClassName("modal");
+            for (var i = 0; i < modals.length; i++) {
+                if (event.target == modals[i]) {
+                    modals[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
